@@ -11,7 +11,7 @@ import (
 
 	"example.com/infrahandson/internal/domain/entity"
 	"example.com/infrahandson/internal/interface/handler"
-	wsUC "example.com/infrahandson/internal/usecase/websocket"
+	websocketcase "example.com/infrahandson/internal/usecase/websocket"
 	mock_service "example.com/infrahandson/test/mocks/domain/service"
 	mock_adapter "example.com/infrahandson/test/mocks/interface/adapter"
 	mock_factory "example.com/infrahandson/test/mocks/interface/factory"
@@ -33,12 +33,12 @@ func TestConnectToChatRoom(t *testing.T) {
 	mockLogger := mock_adapter.NewMockLoggerAdapter(ctrl)
 
 	WsHandler := handler.NewWebSocketHandler(handler.NewWebSocketHandlerParams{
-		WsUseCase:        mockWsUseCase,
-		WsUpgrader:       mockWsUpGrader,
-		WsConnFactory:    mockWsConnFactory,
-		UserIDFactory:    mockUserIDFactory,
+		WsUseCase:     mockWsUseCase,
+		WsUpgrader:    mockWsUpGrader,
+		WsConnFactory: mockWsConnFactory,
+		UserIDFactory: mockUserIDFactory,
 		RoomIDFactory: mockRoomIDFactory,
-		Logger:           mockLogger,
+		Logger:        mockLogger,
 	})
 
 	t.Run("Successful connection and message handling", func(t *testing.T) {
@@ -59,11 +59,11 @@ func TestConnectToChatRoom(t *testing.T) {
 
 		// メッセージのモック
 		testMessage := entity.NewMessage(entity.MessageParams{
-			ID: entity.MessageID("test-message"),
-			UserID:   "test-user",
-			RoomID:   "test-room",
-			Content:  "testcontent",
-			SentAt:   time.Now(),
+			ID:      entity.MessageID("test-message"),
+			UserID:  "test-user",
+			RoomID:  "test-room",
+			Content: "testcontent",
+			SentAt:  time.Now(),
 		})
 
 		mockLogger.EXPECT().
@@ -82,7 +82,7 @@ func TestConnectToChatRoom(t *testing.T) {
 		time.Sleep(100 * time.Millisecond)
 		mockConn.EXPECT().ReadMessage().Return(0, nil, assert.AnError)
 		mockLogger.EXPECT().Warn(gomock.Any(), gomock.Any())
-		mockWsUseCase.EXPECT().DisconnectUser(context.Background(), gomock.Any()).DoAndReturn(func(req wsUC.DisconnectUserRequest) error {
+		mockWsUseCase.EXPECT().DisconnectUser(context.Background(), gomock.Any()).DoAndReturn(func(req websocketcase.DisconnectUserRequest) error {
 			wg.Done() // goroutine終了の合図
 			return nil
 		})
@@ -112,7 +112,7 @@ func TestConnectToChatRoom(t *testing.T) {
 
 	t.Run("Missing user ID", func(t *testing.T) {
 		e := echo.New()
-	
+
 		req := httptest.NewRequest(http.MethodGet, "/ws/test-room", nil)
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)

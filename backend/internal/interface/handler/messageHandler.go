@@ -8,18 +8,18 @@ import (
 
 	"example.com/infrahandson/internal/domain/entity"
 	"example.com/infrahandson/internal/interface/adapter"
-	messageUC "example.com/infrahandson/internal/usecase/message"
+	messagecase "example.com/infrahandson/internal/usecase/message"
 
 	"github.com/labstack/echo/v4"
 )
 
 type MessageHandler struct {
-	MsgUseCase messageUC.MessageUseCaseInterface
+	MsgUseCase messagecase.MessageUseCaseInterface
 	Logger     adapter.LoggerAdapter
 }
 
 type NewMessageHandlerParams struct {
-	MsgUseCase messageUC.MessageUseCaseInterface
+	MsgUseCase messagecase.MessageUseCaseInterface
 	Logger     adapter.LoggerAdapter
 }
 
@@ -51,16 +51,16 @@ type GetMessageHistoryInRoomRequest struct {
 
 type GetMessageHistoryInRoomResponse struct {
 	Messages         []MessageResponse `json:"messages"`
-	NextBeforeSentAt string           `json:"next_before_sent_at"`
-	HasNext          bool             `json:"has_next"`
+	NextBeforeSentAt string            `json:"next_before_sent_at"`
+	HasNext          bool              `json:"has_next"`
 }
 
 type MessageResponse struct {
-	ID        string    `json:"id"`
-	RoomID    string    `json:"room_id"`
-	UserID    string    `json:"user_id"`
-	Content   string    `json:"content"`
-	SentAt    time.Time `json:"sent_at"`
+	ID      string    `json:"id"`
+	RoomID  string    `json:"room_id"`
+	UserID  string    `json:"user_id"`
+	Content string    `json:"content"`
+	SentAt  time.Time `json:"sent_at"`
 }
 
 func (h *MessageHandler) GetMessageHistoryInRoom(c echo.Context) error {
@@ -103,7 +103,7 @@ func (h *MessageHandler) GetMessageHistoryInRoom(c echo.Context) error {
 	}
 
 	// Usecase呼び出し
-	res, err := h.MsgUseCase.GetMessageHistoryInRoom(ctx, messageUC.GetMessageHistoryInRoomRequest{
+	res, err := h.MsgUseCase.GetMessageHistoryInRoom(ctx, messagecase.GetMessageHistoryInRoomRequest{
 		RoomID:       req.RoomID,
 		Limit:        req.Limit,
 		BeforeSentAt: req.BeforeSentAt,
@@ -112,7 +112,7 @@ func (h *MessageHandler) GetMessageHistoryInRoom(c echo.Context) error {
 		h.Logger.Error("failed to get message history: %v", err)
 		return echo.NewHTTPError(http.StatusInternalServerError, "failed to get message history")
 	}
-	
+
 	// レスポンス構築
 	messages := make([]MessageResponse, len(res.Messages))
 	for i, msg := range res.Messages {

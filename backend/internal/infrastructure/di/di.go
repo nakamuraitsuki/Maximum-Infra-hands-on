@@ -29,10 +29,10 @@ import (
 	inmemorywsmanagerimpl "example.com/infrahandson/internal/infrastructure/serviceImpl/websocketManagerImpl/InMemory"
 	"example.com/infrahandson/internal/interface/gateway"
 	"example.com/infrahandson/internal/interface/handler"
-	messageUC "example.com/infrahandson/internal/usecase/message"
+	messagecase "example.com/infrahandson/internal/usecase/message"
 	roomUC "example.com/infrahandson/internal/usecase/room"
-	userUC "example.com/infrahandson/internal/usecase/user"
-	wsUC "example.com/infrahandson/internal/usecase/websocket"
+	usercase "example.com/infrahandson/internal/usecase/user"
+	websocketcase "example.com/infrahandson/internal/usecase/websocket"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/bradfitz/gomemcache/memcache"
 	"github.com/jmoiron/sqlx"
@@ -168,7 +168,7 @@ func InitializeDependencies(cfg *config.Config) *Dependencies {
 	})
 
 	// UseCaseの初期化
-	userUseCase := userUC.NewUserUseCase(userUC.NewUserUseCaseParams{
+	userUseCase := usercase.NewUserUseCase(usercase.NewUserUseCaseParams{
 		UserRepo:      userRepository,
 		Hasher:        hasher,
 		TokenSvc:      tokenService,
@@ -180,7 +180,7 @@ func InitializeDependencies(cfg *config.Config) *Dependencies {
 		UserRepo:      userRepository,
 		RoomIDFactory: roomIDFactory,
 	})
-	wsUseCase := wsUC.NewWebsocketUseCase(wsUC.NewWebsocketUseCaseParams{
+	wsUseCase := websocketcase.NewWebsocketUseCase(websocketcase.NewWebsocketUseCaseParams{
 		UserRepo:         userRepository,
 		RoomRepo:         roomRepository,
 		MsgRepo:          msgRepository,
@@ -190,7 +190,7 @@ func InitializeDependencies(cfg *config.Config) *Dependencies {
 		MsgIDFactory:     MsgIDFactory,
 		ClientIDFactory:  clientDFactory,
 	})
-	msgUseCase := messageUC.NewMessageUseCase(messageUC.NewMessageUseCaseParams{
+	msgUseCase := messagecase.NewMessageUseCase(messagecase.NewMessageUseCaseParams{
 		MsgRepo:  msgRepository,
 		MsgCache: msgCache,
 		RoomRepo: roomRepository,

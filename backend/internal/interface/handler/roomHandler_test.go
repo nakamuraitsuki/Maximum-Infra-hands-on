@@ -10,10 +10,9 @@ import (
 	"example.com/infrahandson/internal/domain/entity"
 	"example.com/infrahandson/internal/infrastructure/validator"
 	"example.com/infrahandson/internal/interface/handler"
-	roomUC "example.com/infrahandson/internal/usecase/room"
 	mock_adapter "example.com/infrahandson/test/mocks/interface/adapter"
 	mock_factory "example.com/infrahandson/test/mocks/interface/factory"
-	mock_room "example.com/infrahandson/test/mocks/usecase/room"
+	mock_roomcase "example.com/infrahandson/test/mocks/usecase/roomcase"
 
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +23,7 @@ func TestCreateRoom(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockRoomUseCase := mock_room.NewMockRoomUseCaseInterface(ctrl)
+	mockRoomUseCase := mock_roomcase.NewMockRoomUseCaseInterface(ctrl)
 	mockUserIDFactory := mock_factory.NewMockUserIDFactory(ctrl)
 	mockRoomIDFactory := mock_factory.NewMockRoomIDFactory(ctrl)
 	mockLogger := mock_adapter.NewMockLoggerAdapter(ctrl)
